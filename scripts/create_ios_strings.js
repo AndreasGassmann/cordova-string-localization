@@ -97,11 +97,13 @@ module.exports = function(context) {
 
             //read the json file
             var langJson = require(lang.path);
-            if (_.has(langJson, "APP_NAME")) {
+
+            if (_.has(langJson, "NSLocationWhenInUseUsageDescription")) {
                 //do processing for appname into plist
                 var plistString = {
-                    CFBundleDisplayName: langJson.APP_NAME,
-                    CFBundleName: langJson.APP_NAME
+                    NSLocationWhenInUseUsageDescription: langJson.NSLocationWhenInUseUsageDescription,
+                    NSCameraUsageDescription: langJson.NSCameraUsageDescription,
+                    NSPhotoLibraryUsageDescription: langJson.NSPhotoLibraryUsageDescription
                 };
                 writeStringFile(plistString, lang.lang, "InfoPlist.strings");
                 infoPlistPaths.push(lang.lang + ".lproj/" + "InfoPlist.strings");
@@ -109,6 +111,9 @@ module.exports = function(context) {
 
             //remove APP_NAME and write to Localizable.strings
             var localizableStringsJson = _.omit(langJson, "APP_NAME");
+            localizableStringsJson = _.omit(localizableStringsJson, "NSCameraUsageDescription");
+            localizableStringsJson = _.omit(localizableStringsJson, "NSLocationWhenInUseUsageDescription");
+            localizableStringsJson = _.omit(localizableStringsJson, "NSPhotoLibraryUsageDescription");
             if (!_.isEmpty(localizableStringsJson)) {
                 writeStringFile(localizableStringsJson, lang.lang, "Localizable.strings");
                 localizableStringsPaths.push(lang.lang + ".lproj/" + "Localizable.strings");
@@ -164,4 +169,3 @@ function getTargetLang(context) {
     );
     return deferred.promise;
 }
-
